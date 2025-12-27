@@ -1,8 +1,25 @@
 services:
+  textbee-db:
+    container_name: textbee-db
+    image: 'mongo:latest'
+    restart: always
+    environment:
+      - 'MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USER:-adminUser}'
+      - 'MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASS:-adminPassword}'
+      - MONGO_INITDB_DATABASE=textbee
+    volumes:
+      - 'mongodb_data:/data/db'
+    networks:
+      - coolify
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
   textbee-api:
     container_name: textbee-api
     build:
-      # This tells Docker to start looking INSIDE the api folder
       context: ./api
       dockerfile: Dockerfile
     restart: always
@@ -19,7 +36,6 @@ services:
   textbee-web:
     container_name: textbee-web
     build:
-      # This tells Docker to start looking INSIDE the web folder
       context: ./web
       dockerfile: Dockerfile
     restart: always
@@ -31,4 +47,21 @@ services:
       - textbee-api
     networks:
       - coolify
-# ... keep the rest of your DB and Redis services as they are
+
+  textbee-redis:
+    container_name: textbee-redis
+    image: 'redis:alpine'
+    restart: always
+    volumes:
+      - 'redis_data:/data'
+    networks:
+      - coolify
+
+# --- THIS PART WAS MISSING OR INCORRECT ---
+networks:
+  coolify:
+    external: true
+
+volumes:
+  mongodb_data:
+  redis_data:
