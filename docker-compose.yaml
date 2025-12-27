@@ -1,32 +1,15 @@
 services:
-  textbee-db:
-    container_name: textbee-db
-    image: mongo:latest
-    restart: always
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USER:-adminUser}
-      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASS:-adminPassword}
-      - MONGO_INITDB_DATABASE=textbee
-    volumes:
-      - mongodb_data:/data/db
-    networks:
-      - coolify
-    healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
   textbee-api:
     container_name: textbee-api
     build:
-      context: .
-      dockerfile: api/Dockerfile
+      # This tells Docker to start looking INSIDE the api folder
+      context: ./api
+      dockerfile: Dockerfile
     restart: always
     environment:
       - PORT=3001
-      - MONGODB_URI=mongodb://${MONGO_ROOT_USER:-adminUser}:${MONGO_ROOT_PASS:-adminPassword}@textbee-db:27017/textbee?authSource=admin
-      - REDIS_URL=redis://textbee-redis:6379
+      - 'MONGODB_URI=mongodb://${MONGO_ROOT_USER:-adminUser}:${MONGO_ROOT_PASS:-adminPassword}@textbee-db:27017/textbee?authSource=admin'
+      - 'REDIS_URL=redis://textbee-redis:6379'
     depends_on:
       textbee-db:
         condition: service_healthy
@@ -36,31 +19,16 @@ services:
   textbee-web:
     container_name: textbee-web
     build:
-      context: .
-      dockerfile: web/Dockerfile
+      # This tells Docker to start looking INSIDE the web folder
+      context: ./web
+      dockerfile: Dockerfile
     restart: always
     environment:
       - PORT=3000
-      - NEXT_PUBLIC_API_BASE_URL=${SERVICE_FQDN_TEXTBEE_API}/api/v1
-      - NEXT_PUBLIC_SITE_URL=${SERVICE_FQDN_TEXTBEE_DASHBOARD}
+      - 'NEXT_PUBLIC_API_BASE_URL=${SERVICE_FQDN_TEXTBEE_API}/api/v1'
+      - 'NEXT_PUBLIC_SITE_URL=${SERVICE_FQDN_TEXTBEE_DASHBOARD}'
     depends_on:
       - textbee-api
     networks:
       - coolify
-
-  textbee-redis:
-    container_name: textbee-redis
-    image: redis:alpine
-    restart: always
-    volumes:
-      - redis_data:/data
-    networks:
-      - coolify
-
-networks:
-  coolify:
-    external: true
-
-volumes:
-  mongodb_data:
-  redis_data:
+# ... keep the rest of your DB and Redis services as they are
