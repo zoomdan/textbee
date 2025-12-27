@@ -57,7 +57,6 @@ services:
     networks:
       - coolify
 
-# --- THIS PART WAS MISSING OR INCORRECT ---
 networks:
   coolify:
     external: true
