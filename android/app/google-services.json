@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "651905588745",
+    "project_id": "textbee-6efde",
+    "storage_bucket": "textbee-6efde.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:651905588745:android:2cfb88e462c9976071a2d8",
+        "android_client_info": {
+          "package_name": "com.vernu.sms.dev"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD8GJv6Y2VL3bh3dlWOLORDf8drkokdUoQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
