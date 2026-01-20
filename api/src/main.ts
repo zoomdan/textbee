@@ -76,7 +76,14 @@ async function bootstrap() {
     express.raw({ type: 'application/json' }),
   )
   app.useBodyParser('json', { limit: '2mb' });
-  app.enableCors()
+  app.enableCors({
+  origin: [
+    'https://textbee.zoomdang.com', // Add your dashboard URL here
+    'http://localhost:3000'
+  ],
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+});
   await app.listen(PORT)
 }
 bootstrap()
